@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = '';
     }
-    statusEl.innerHTML = '🟢 Engine: <strong style="color:#166534">Ready (Offline)</strong>';
+    statusEl.innerHTML = '🟢 Engine: <strong style="color:#166534">Ready</strong>';
   } else {
     statusEl.innerHTML = '⚠️ Engine: Loading libraries...';
     setTimeout(() => {
