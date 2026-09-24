@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sushant's PDF Studio - 100% Free PDF Tools</title>
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Automatic loader: checks vendor/ first, falls back to CDN -->
+  <script src="vendor/pdf-lib.min.js" onerror="this.onerror=null; this.src='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';"></script>
+  <script src="vendor/pdf.min.js" onerror="this.onerror=null; this.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';"></script>
+  <script src="vendor/jszip.min.js" onerror="this.onerror=null; this.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';"></script>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="brand-badge-wrap">
+      <div class="brand" onclick="showDashboard()">
+        <span class="logo-icon">⚡</span> Sushant's PDF Studio
+      </div>
+      <!-- <span class="privacy-badge">🔒 100% Client-Side • Zero Cloud Uploads</span> -->
+    </div>
+    <div class="header-status" id="libStatus">Checking engine readiness...</div>
+  </header>
+
+  <main class="main-container">
+    <!-- DASHBOARD VIEW -->
+    <section id="dashboard" class="dashboard-grid">
+      <!-- 1. Merge -->
+      <div class="tool-card featured-card" onclick="openTool('merge')">
+        <span class="tool-icon">🔗</span>
+        <h3 class="tool-title">Merge PDF</h3>
+        <p class="tool-desc">Combine multiple PDFs into a single unified document with custom ordering.</p>
+      </div>
+
+      <!-- 2. Split -->
+      <div class="tool-card featured-card" onclick="openTool('split')">
+        <span class="tool-icon">✂️</span>
+        <h3 class="tool-title">Split / Extract</h3>
+        <p class="tool-desc">Extract specific ranges (e.g. 1-3, 5) or separate pages into a fresh PDF.</p>
+      </div>
+
+      <!-- 3. Sign PDF (NEW) -->
+      <div class="tool-card featured-card" onclick="openTool('sign')">
+        <span class="tool-icon">✍️</span>
+        <h3 class="tool-title">Sign PDF</h3>
+        <p class="tool-desc">Draw your signature and stamp it directly onto your document pages.</p>
+      </div>
+
+      <!-- 4. Unlock PDF (NEW) -->
+      <div class="tool-card featured-card" onclick="openTool('unlock')">
+        <span class="tool-icon">🔓</span>
+        <h3 class="tool-title">Unlock PDF</h3>
+        <p class="tool-desc">Remove password encryption and security restrictions permanently using the password.</p>
+      </div>
+
+      <!-- 5. PDF to Images -->
+      <div class="tool-card featured-card" onclick="openTool('pdf2img')">
+        <span class="tool-icon">🖼️</span>
+        <h3 class="tool-title">PDF to Images</h3>
+        <p class="tool-desc">Render each PDF page as high-res PNG or JPEG and download as a ZIP package.</p>
+      </div>
+
+      <!-- 6. Images to PDF -->
+      <div class="tool-card featured-card" onclick="openTool('img2pdf')">
+        <span class="tool-icon">📸</span>
+        <h3 class="tool-title">Images to PDF</h3>
+        <p class="tool-desc">Convert JPG and PNG images into a clean, multipage PDF document.</p>
+      </div>
+
+      <!-- 7. Rotate Pages -->
+      <div class="tool-card featured-card" onclick="openTool('rotate')">
+        <span class="tool-icon">🔄</span>
+        <h3 class="tool-title">Rotate PDF</h3>
+        <p class="tool-desc">Rotate PDF pages by 90°, 180°, or 270° clockwise with instant live preview.</p>
+      </div>
+
+      <!-- 8. Watermark -->
+      <div class="tool-card featured-card" onclick="openTool('watermark')">
+        <span class="tool-icon">💧</span>
+        <h3 class="tool-title">Add Watermark</h3>
+        <p class="tool-desc">Overlay custom diagonal text watermarks with transparency on every page.</p>
+      </div>
+
+      <!-- 9. Page Numbers -->
+      <div class="tool-card featured-card" onclick="openTool('pagenum')">
+        <span class="tool-icon">🔢</span>
+        <h3 class="tool-title">Page Numbers</h3>
+        <p class="tool-desc">Stamp sequential "Page X of Y" labels cleanly into bottom margins.</p>
+      </div>
+
+      <!-- 10. Delete Pages -->
+      <div class="tool-card featured-card" onclick="openTool('delete')">
+        <span class="tool-icon">🗑️</span>
+        <h3 class="tool-title">Remove Pages</h3>
+        <p class="tool-desc">Delete unwanted pages or ranges from any PDF document.</p>
+      </div>
+
+      <!-- 11. Password Protect -->
+      <div class="tool-card featured-card" onclick="openTool('protect')">
+        <span class="tool-icon">🔐</span>
+        <h3 class="tool-title">Protect PDF</h3>
+        <p class="tool-desc">Encrypt your PDF with standard user & owner passwords.</p>
+      </div>
+
+      <!-- 12. Flatten Forms -->
+      <div class="tool-card featured-card" onclick="openTool('flatten')">
+        <span class="tool-icon">📑</span>
+        <h3 class="tool-title">Flatten PDF</h3>
+        <p class="tool-desc">Permanently bake interactive form fields and signatures into the page canvas.</p>
+      </div>
+
+      <!-- 13. Remove Signature Validation -->
+      <div class="tool-card featured-card" onclick="openTool('unsign')">
+        <span class="tool-icon">🔏</span>
+        <h3 class="tool-title">Remove Signature Validation</h3>
+        <p class="tool-desc">Strip cryptographic PKI signatures, ByteRange locks, and validation banners completely.</p>
+      </div>
+    </section>
+
+    <!-- WORKSPACE VIEWS -->
+
+    <!-- Tool: Sign PDF -->
+    <div id="view-sign" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Sign PDF Document</h2>
+      <p class="workspace-subtitle">Draw your signature and stamp it anywhere on your PDF.</p>
+
+      <div class="form-group">
+        <label>1. Select PDF Document</label>
+        <input type="file" id="sign-file" accept="application/pdf" />
+      </div>
+
+      <div class="form-group">
+        <label>2. Draw Signature</label>
+        <div class="signature-container">
+          <canvas id="signature-pad" width="500" height="180"></canvas>
+          <div class="sig-controls">
+            <button type="button" class="btn-subtle" onclick="clearSignaturePad()">Clear Signature</button>
+            <span class="sig-hint">Draw using mouse or touch</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label>Target Page</label>
+          <select id="sign-page-target">
+            <option value="last">Last Page</option>
+            <option value="first">First Page</option>
+            <option value="all">All Pages</option>
+          </select>
+        </div>
+        <div class="form-group half">
+          <label>Placement Position</label>
+          <select id="sign-position">
+            <option value="bottom-right" selected>Bottom Right</option>
+            <option value="bottom-left">Bottom Left</option>
+            <option value="bottom-center">Bottom Center</option>
+            <option value="top-right">Top Right</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="execSignPdf()">Sign & Download</button>
+      <div id="status-sign" class="status-box"></div>
+    </div>
+
+    <!-- Tool: Unlock PDF -->
+    <div id="view-unlock" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Unlock PDF Password</h2>
+      <p class="workspace-subtitle">Decrypt the file and permanently strip password restrictions.</p>
+      <div class="form-group">
+        <label>Select Locked PDF</label>
+        <input type="file" id="unlock-file" accept="application/pdf" />
+      </div>
+      <div class="form-group">
+        <label>Enter Password</label>
+        <input type="password" id="unlock-password" placeholder="Enter document password" />
+      </div>
+      <button class="btn-primary" onclick="execUnlock()">Unlock & Remove Password</button>
+      <div id="status-unlock" class="status-box"></div>
+    </div>
+
+    <!-- Merge Tool View -->
+    <div id="view-merge" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Merge PDFs</h2>
+      <p class="workspace-subtitle">Combine multiple PDF documents into one continuous file.</p>
+      <div class="form-group">
+        <label>Select PDF Files</label>
+        <input type="file" id="merge-files" multiple accept="application/pdf" />
+      </div>
+      <button class="btn-primary" onclick="execMerge()">Merge & Download</button>
+      <div id="status-merge" class="status-box"></div>
+    </div>
+
+    <!-- Split Tool View -->
+    <div id="view-split" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Split / Extract Pages</h2>
+      <p class="workspace-subtitle">Extract single pages or ranges into a standalone PDF.</p>
+      <div class="form-group">
+        <label>Choose Source PDF</label>
+        <input type="file" id="split-file" accept="application/pdf" />
+      </div>
+      <div class="form-group">
+        <label>Page Range (e.g., <code>1-3, 5, 7-10</code>)</label>
+        <input type="text" id="split-ranges" placeholder="1-3, 5" />
+      </div>
+      <button class="btn-primary" onclick="execSplit()">Extract Pages</button>
+      <div id="status-split" class="status-box"></div>
+    </div>
+
+    <!-- PDF to Image View -->
+    <div id="view-pdf2img" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>PDF to Images (ZIP)</h2>
+      <p class="workspace-subtitle">Convert every page into high-resolution JPG or PNG pictures.</p>
+      <div class="form-group">
+        <label>Choose PDF</label>
+        <input type="file" id="pdf2img-file" accept="application/pdf" />
+      </div>
+      <div class="form-row">
+        <div class="form-group half">
+          <label>Image Format</label>
+          <select id="pdf2img-format">
+            <option value="image/png">PNG (Lossless)</option>
+            <option value="image/jpeg">JPEG (Compressed)</option>
+          </select>
+        </div>
+        <div class="form-group half">
+          <label>Resolution Quality</label>
+          <select id="pdf2img-scale">
+            <option value="1.5">Standard (~110 DPI)</option>
+            <option value="2.0" selected>High (~150 DPI)</option>
+            <option value="3.0">Ultra (~216 DPI)</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="execPdf2Img()">Convert to Images</button>
+      <div id="status-pdf2img" class="status-box"></div>
+    </div>
+
+    <!-- Images to PDF View -->
+    <div id="view-img2pdf" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Images to PDF</h2>
+      <p class="workspace-subtitle">Convert JPG/PNG images into a PDF document.</p>
+      <div class="form-group">
+        <label>Select JPG / PNG Images</label>
+        <input type="file" id="img2pdf-files" multiple accept="image/png, image/jpeg" />
+      </div>
+      <button class="btn-primary" onclick="execImg2Pdf()">Create PDF</button>
+      <div id="status-img2pdf" class="status-box"></div>
+    </div>
+
+    <!-- Rotate View -->
+    <div id="view-rotate" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Rotate PDF Pages</h2>
+      <p class="workspace-subtitle">Rotate every page clockwise.</p>
+      <div class="form-group">
+        <label>Choose PDF File</label>
+        <input type="file" id="rotate-file" accept="application/pdf" />
+      </div>
+      <div class="form-group">
+        <label>Rotation Direction</label>
+        <select id="rotate-angle">
+          <option value="90">90° Clockwise</option>
+          <option value="180">180° Flip</option>
+          <option value="270">270° Clockwise</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="execRotate()">Rotate & Download</button>
+      <div id="status-rotate" class="status-box"></div>
+    </div>
+
+    <!-- Watermark View -->
+    <div id="view-watermark" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Add Watermark</h2>
+      <p class="workspace-subtitle">Stamp semi-transparent diagonal text across every page.</p>
+      <div class="form-group">
+        <label>Choose PDF File</label>
+        <input type="file" id="watermark-file" accept="application/pdf" />
+      </div>
+      <div class="form-group">
+        <label>Watermark Text</label>
+        <input type="text" id="watermark-text" placeholder="CONFIDENTIAL" />
+      </div>
+      <button class="btn-primary" onclick="execWatermark()">Apply Watermark</button>
+      <div id="status-watermark" class="status-box"></div>
+    </div>
+
+    <!-- Page Numbers View -->
+    <div id="view-pagenum" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Add Page Numbers</h2>
+      <p class="workspace-subtitle">Insert bottom-centered pagination.</p>
+      <div class="form-group">
+        <label>Choose PDF File</label>
+        <input type="file" id="pagenum-file" accept="application/pdf" />
+      </div>
+      <button class="btn-primary" onclick="execPageNum()">Add Page Numbers</button>
+      <div id="status-pagenum" class="status-box"></div>
+    </div>
+
+    <!-- Delete Pages View -->
+    <div id="view-delete" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Remove Pages</h2>
+      <p class="workspace-subtitle">Delete unwanted pages from your document.</p>
+      <div class="form-group">
+        <label>Choose PDF File</label>
+        <input type="file" id="delete-file" accept="application/pdf" />
+      </div>
+      <div class="form-group">
+        <label>Pages to Delete (e.g. <code>2, 4-6</code>)</label>
+        <input type="text" id="delete-pages" placeholder="2, 4-6" />
+      </div>
+      <button class="btn-primary" onclick="execDelete()">Delete & Download</button>
+      <div id="status-delete" class="status-box"></div>
+    </div>
+
+    <!-- Protect View -->
+    <div id="view-protect" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Password Protect PDF</h2>
+      <p class="workspace-subtitle">Lock and encrypt your PDF document with a user password.</p>
+      <div class="form-group">
+        <label>Choose PDF File</label>
+        <input type="file" id="protect-file" accept="application/pdf" />
+      </div>
+      <div class="form-group">
+        <label>Enter Password</label>
+        <input type="password" id="protect-password" placeholder="••••••••" />
+      </div>
+      <button class="btn-primary" onclick="execProtect()">Encrypt PDF</button>
+      <div id="status-protect" class="status-box"></div>
+    </div>
+
+    <!-- Flatten View -->
+    <div id="view-flatten" class="workspace">
+      <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+      <h2>Flatten PDF Forms</h2>
+      <p class="workspace-subtitle">Make editable AcroForm fields permanent.</p>
+      <div class="form-group">
+        <label>Choose PDF File</label>
+        <input type="file" id="flatten-file" accept="application/pdf" />
+      </div>
+      <button class="btn-primary" onclick="execFlatten()">Flatten & Download</button>
+      <div id="status-flatten" class="status-box"></div>
+    </div>
+
+    <!-- Tool Workspace: Remove Signature Validation -->
+    <div id="view-unsign" class="workspace">
+            <button class="back-btn" onclick="showDashboard()">← Back to Dashboard</button>
+            <h2>Remove Signature Validation</h2>
+            <p class="workspace-subtitle">Strip digital certificates, PKCS#7 signatures, DocMDP locks, and validation banners.</p>
+        
+        <div class="form-group">
+            <label>Select Digitally Signed PDF</label>
+            <input type="file" id="unsign-file" accept="application/pdf" />
+        </div>
+
+        <div class="form-group">
+            <label>Processing Mode</label>
+            <select id="unsign-mode">
+                <option value="strip" selected>Strip Signature Dictionaries (Keeps visual vector text/markup)</option>
+                <option value="rasterize">Deep Sanitize / Flatten (Renders clean pages, destroys 100% of metadata/scripts)</option>
+            </select>
+        </div>
+            <button class="btn-primary" onclick="execRemoveSignatureValidation()">Strip Signature & Download</button>
+            <div id="status-unsign" class="status-box"></div>
+    </div>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
